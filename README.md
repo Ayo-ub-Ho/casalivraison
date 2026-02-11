@@ -106,12 +106,12 @@ Scanner le QR code avec Expo Go.
 Créer un fichier `.env` dans le dossier `backend/` :
 
 ```env
-PORT=5000
-DB_HOST=db
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_NAME=casalivraison
-DB_PORT=5432
+PORT=
+DB_HOST=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
+DB_PORT=
 JWT_SECRET=supersecretkey
 ```
 
