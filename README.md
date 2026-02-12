@@ -1,7 +1,14 @@
 # 🍕 CasaLivraison – La Tech au Service du Goût
 
-CasaLivraison est une application mobile de livraison premium basée à Casablanca.  
-Elle permet aux utilisateurs de consulter les restaurants à proximité, parcourir les menus et passer commande rapidement via une identification par numéro de téléphone (OTP).
+CasaLivraison est une application mobile de livraison premium basée à Casablanca.
+
+L'application permet aux utilisateurs de :
+
+- Consulter les restaurants à proximité
+- Parcourir les menus librement
+- Ajouter des produits au panier
+- Passer commande via une identification par numéro de téléphone (OTP)
+- Suivre le statut de leur livraison
 
 ---
 
@@ -13,7 +20,7 @@ Elle permet aux utilisateurs de consulter les restaurants à proximité, parcour
 - Express.js
 - PostgreSQL
 - Sequelize ORM
-- JWT (authentification via téléphone)
+- JWT (authentification par téléphone)
 - Docker
 
 ## 🔹 Mobile
@@ -30,17 +37,17 @@ Elle permet aux utilisateurs de consulter les restaurants à proximité, parcour
 
 ---
 
-# 📱 Fonctionnalités
+# 📱 Fonctionnalités Principales
 
-- Consultation des restaurants sans compte
+- Consultation des restaurants sans création de compte
 - Filtrage par catégories
-- Consultation des menus
+- Consultation détaillée des menus
 - Panier dynamique
-- Identification par numéro de téléphone (OTP)
-- Création de commande
+- Identification via numéro de téléphone (OTP simulé)
+- Création et stockage des commandes
 - Suivi de commande (En attente → Validée → Livrée)
 - Historique des commandes
-- Support offline (cache restaurants & panier)
+- Gestion offline (cache restaurants & panier)
 
 ---
 
@@ -52,6 +59,7 @@ casalivraison/
 ├── backend/
 │   ├── src/
 │   ├── Dockerfile
+│   ├── .env.example
 │   └── package.json
 │
 ├── mobile/
@@ -69,13 +77,29 @@ casalivraison/
 ## 1️⃣ Cloner le projet
 
 ```bash
-git clone https://github.com/VOTRE_USERNAME/casalivraison.git
+git clone https://github.com/Ayo-ub-Ho/casalivraison.git
 cd casalivraison
 ```
 
 ---
 
-## 2️⃣ Lancer avec Docker (Backend + PostgreSQL)
+## 2️⃣ Configuration des variables d’environnement
+
+Créer un fichier `.env` dans le dossier `backend/` :
+
+```env
+PORT=5000
+DB_HOST=db
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=casalivraison
+DB_PORT=5432
+JWT_SECRET=supersecretkey
+```
+
+---
+
+# 🐳 Lancement avec Docker (Recommandé)
 
 ```bash
 docker-compose up --build
@@ -89,7 +113,17 @@ http://localhost:5000
 
 ---
 
-## 3️⃣ Lancer l’application mobile
+# 🖥 Lancement Backend sans Docker (optionnel)
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+---
+
+# 📱 Lancement Application Mobile
 
 ```bash
 cd mobile
@@ -101,27 +135,10 @@ Scanner le QR code avec Expo Go.
 
 ---
 
-# 🔐 Variables d’Environnement
-
-Créer un fichier `.env` dans le dossier `backend/` :
-
-```env
-PORT=
-DB_HOST=
-DB_USER=
-DB_PASSWORD=
-DB_NAME=
-DB_PORT=
-JWT_SECRET=supersecretkey
-```
-
----
-
 # 🧪 Tests Backend
 
-Dans le dossier `backend` :
-
 ```bash
+cd backend
 npm run test
 ```
 
@@ -135,59 +152,44 @@ eas build -p android
 
 ---
 
-# 🐳 Docker
-
-Pour lancer toute l’infrastructure :
-
-```bash
-docker-compose up
-```
-
-Pour arrêter :
-
-```bash
-docker-compose down
-```
-
----
-
 # 🔄 CI/CD
 
 Le pipeline GitHub Actions :
 
-- Installe les dépendances
-- Lance les tests
-- Vérifie le build
-- S’exécute automatiquement à chaque push
+- Installation automatique des dépendances
+- Exécution des tests
+- Validation du build
+- Déclenchement à chaque push
 
 ---
 
 # 🎯 Parcours Utilisateur
 
-1. L’utilisateur ouvre l’application
-2. Autorise la localisation
-3. Consulte les restaurants
-4. Ajoute des produits au panier
-5. Saisit son numéro de téléphone
-6. Vérifie via OTP
-7. Confirme la commande
-8. Suit le statut de livraison
+1. Ouverture de l’application
+2. Autorisation de la localisation
+3. Consultation des restaurants
+4. Ajout de produits au panier
+5. Saisie du numéro de téléphone
+6. Vérification via code OTP
+7. Confirmation de la commande
+8. Suivi du statut de livraison
 
 ---
 
-# 👨‍💻 Auteur
+# 🎓 Objectif Pédagogique
+
+Ce projet vise à démontrer :
+
+- La conception d'une API REST robuste
+- L'architecture d'une application mobile professionnelle
+- La mise en place d'une base de données relationnelle
+- La containerisation avec Docker
+- L'automatisation CI/CD
+- L'application des bonnes pratiques de développement
+
+---
+
+# 👨‍💻 AYYOUB
 
 Projet réalisé dans le cadre de la formation  
 **Développement Mobile – Simplon Academy**
-
----
-
-# 📌 Objectif Pédagogique
-
-Développer une solution complète incluant :
-
-- Architecture backend robuste
-- Application mobile professionnelle
-- Containerisation avec Docker
-- Automatisation CI/CD
-- Tests et qualité logicielle
