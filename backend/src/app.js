@@ -1,7 +1,6 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const db = require("./models");
+import express from "express";
+import cors from "cors";
+import db from "./models/index.js";
 
 const app = express();
 app.use(cors());

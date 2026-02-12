@@ -1,6 +1,6 @@
-const sequelise = require("../config/db");
+import sequelize from "../config/db.js";
 
 const db = {};
-db.Sequelize = sequelise;
+db.sequelize = sequelize;
 
-module.exports = db;
+export default db;
