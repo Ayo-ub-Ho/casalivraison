@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import db from "./models/index.js";
+import restaurantsRoutes from "./routes/restaurants.routes.js";
 
 const app = express();
 app.use(cors());
@@ -18,6 +19,8 @@ app.get("/", (req, res) => {
     console.error("❌ Unable to connect to the database:", err.message);
   }
 })();
+
+app.use("/api/restaurants", restaurantsRoutes);
 
 const PORT = process.env.PORT || 5000;
 
