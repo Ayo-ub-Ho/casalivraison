@@ -74,6 +74,31 @@ module.exports = {
         createdAt: now,
         updatedAt: now,
       },
+      // Healthy Maârif -> Salades
+      {
+        id: randomUUID(),
+        restaurantId: restByName["Healthy Maârif"],
+        menuCategoryId: catMap[`${restByName["Healthy Maârif"]}:Salades`],
+        name: "Salade César Poulet",
+        description: "Poulet grillé, parmesan, sauce césar.",
+        price: 65,
+        imageUrl: "https://picsum.photos/800/500?salad=1",
+        isAvailable: true,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: randomUUID(),
+        restaurantId: restByName["Healthy Maârif"],
+        menuCategoryId: catMap[`${restByName["Healthy Maârif"]}:Protein Bowls`],
+        name: "Protein Bowl Poulet",
+        description: "Riz, poulet, légumes, sauce maison.",
+        price: 75,
+        imageUrl: "https://picsum.photos/800/500?bowl=2",
+        isAvailable: true,
+        createdAt: now,
+        updatedAt: now,
+      },
     ];
 
     const filtered = items.filter((i) => i.restaurantId && i.menuCategoryId);

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import db from "./models/index.js";
 import restaurantsRoutes from "./routes/restaurants.routes.js";
+import menuItemsRoutes from "./routes/menu-items.routes.js";
 
 const app = express();
 app.use(cors());
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 })();
 
 app.use("/api/restaurants", restaurantsRoutes);
+app.use("/api/menu-items", menuItemsRoutes);
 
 const PORT = process.env.PORT || 5000;
 
