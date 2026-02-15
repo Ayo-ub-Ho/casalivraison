@@ -127,3 +127,72 @@ export const createOrder = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getOrderById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const order = await db.Order.findByPk(id, {
+      include: [
+        { model: db.Restaurant },
+        { model: db.User, attributes: ["id", "phone", "fullName"] },
+        { model: db.OrderItem, include: [{ model: db.MenuItem }] },
+      ],
+      order: [[db.OrderItem, "createdAt", "ASC"]],
+    });
+
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    res.json(order);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const listOrders = async (req, res, next) => {
+  try {
+    const { phone } = req.query;
+
+    if (!phone) {
+      return res.status(400).json({ message: "phone query param is required" });
+    }
+
+    const user = await db.User.findOne({ where: { phone } });
+    if (!user) return res.json([]);
+
+    const orders = await db.Order.findAll({
+      where: { userId: user.id },
+      include: [
+        { model: db.Restaurant },
+        { model: db.OrderItem, include: [{ model: db.MenuItem }] },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.json(orders);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateOrderStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const allowed = ["PENDING", "CONFIRMED", "DELIVERED", "CANCELED"];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    const order = await db.Order.findByPk(id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.status = status;
+    await order.save();
+
+    res.json(order);
+  } catch (err) {
+    next(err);
+  }
+};
