@@ -37,12 +37,32 @@ export default function PickAddressScreen() {
         return;
       }
 
-      const loc = await Location.getCurrentPositionAsync({});
-      setCenter({
-        latitude: loc.coords.latitude,
-        longitude: loc.coords.longitude,
-      });
-      setLoading(false);
+      try {
+        // ✅ Much more stable on emulator
+        let loc = await Location.getLastKnownPositionAsync();
+
+        if (!loc) {
+          // fallback attempt
+          loc = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Low,
+          });
+        }
+
+        if (loc) {
+          setCenter({
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+          });
+        } else {
+          // ✅ Ultimate fallback Casablanca
+          setCenter({ latitude: 33.603, longitude: -7.623 });
+        }
+      } catch (e) {
+        // ✅ Never crash app
+        setCenter({ latitude: 33.603, longitude: -7.623 });
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
