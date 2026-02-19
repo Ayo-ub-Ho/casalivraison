@@ -9,7 +9,7 @@ export default function RootLayout() {
         headerTintColor: "#111",
         headerTitleStyle: { fontWeight: "800" },
         contentStyle: { backgroundColor: "#fff" },
-        // headerShown: false,
+        headerShown: false,
       }}
     />
   );

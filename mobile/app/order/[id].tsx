@@ -3,6 +3,8 @@ import { View, Text, ActivityIndicator, ScrollView } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { api } from "../../src/api/client";
 import { COLORS } from "../../src/config/constants";
+import Card from "../../src/components/Card";
+import StatusBadge from "../../src/components/StatusBadge";
 
 type Order = any;
 
@@ -41,34 +43,29 @@ export default function OrderDetailScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <Stack.Screen options={{ title: "Détail commande" }} />
+    <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
+      <Stack.Screen options={{ title: "Commande" }} />
 
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <Text style={{ fontSize: 20, fontWeight: "900" }}>
-          {order.Restaurant?.name}
-        </Text>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+        <Card>
+          <Text style={{ fontSize: 20, fontWeight: "900" }}>
+            {order.Restaurant?.name}
+          </Text>
 
-        <Text style={{ marginTop: 6, color: COLORS.muted }}>
-          {new Date(order.createdAt).toLocaleString()}
-        </Text>
+          <Text style={{ marginTop: 6, color: COLORS.muted }}>
+            {new Date(order.createdAt).toLocaleString()}
+          </Text>
 
-        <Text style={{ marginTop: 10, fontWeight: "900" }}>
-          Statut : {order.status}
-        </Text>
+          <View style={{ marginTop: 12 }}>
+            <StatusBadge status={order.status} />
+          </View>
+        </Card>
 
-        <View style={{ marginTop: 16 }}>
+        <View style={{ height: 16 }} />
+
+        <Card>
           {order.OrderItems?.map((item: any) => (
-            <View
-              key={item.id}
-              style={{
-                padding: 12,
-                borderRadius: 14,
-                borderWidth: 1,
-                borderColor: "#eee",
-                marginBottom: 10,
-              }}
-            >
+            <View key={item.id} style={{ marginBottom: 14 }}>
               <Text style={{ fontWeight: "900" }}>{item.MenuItem?.name}</Text>
 
               <Text style={{ marginTop: 4, color: COLORS.muted }}>
@@ -80,17 +77,59 @@ export default function OrderDetailScreen() {
               </Text>
             </View>
           ))}
-        </View>
+        </Card>
 
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ fontWeight: "900" }}>
-            Livraison : {order.deliveryFee} MAD
-          </Text>
-          <Text style={{ fontWeight: "900", marginTop: 6 }}>
-            Total : {order.total} MAD
-          </Text>
-        </View>
+        <View style={{ height: 16 }} />
+
+        <Card>
+          <Row label="Produits" value={`${order.subtotal} MAD`} />
+          <Row label="Livraison" value={`${order.deliveryFee} MAD`} />
+          <View
+            style={{
+              height: 1,
+              backgroundColor: COLORS.border,
+              marginVertical: 10,
+            }}
+          />
+          <Row label="Total" value={`${order.total} MAD`} bold />
+        </Card>
       </ScrollView>
+    </View>
+  );
+}
+
+function Row({
+  label,
+  value,
+  bold,
+}: {
+  label: string;
+  value: string;
+  bold?: boolean;
+}) {
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+      }}
+    >
+      <Text
+        style={{
+          color: "#333",
+          fontWeight: bold ? "900" : "700",
+        }}
+      >
+        {label}
+      </Text>
+
+      <Text
+        style={{
+          fontWeight: bold ? "900" : "700",
+        }}
+      >
+        {value}
+      </Text>
     </View>
   );
 }

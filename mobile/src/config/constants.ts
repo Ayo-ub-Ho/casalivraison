@@ -1,10 +1,16 @@
 export const COLORS = {
-  primary: "#fac505",
-  text: "#111",
-  muted: "#666",
-  bg: "#fff",
-  card: "#f7f7f7",
+  primary: "#FF6B00",
+  primaryLight: "#FFF3E8",
+  text: "#111111",
+  muted: "#777777",
+  bg: "#FFFFFF",
+  card: "#F9F9F9",
+  border: "#EEEEEE",
+
+  success: "#22C55E",
+  warning: "#F59E0B",
 };
+
 
 export const API_BASE_URL =
   // Android Emulator:
