@@ -76,13 +76,13 @@ export default function CheckoutScreen() {
       const res = await api.post("/api/orders", payload);
       clearCart();
 
-      Alert.alert("Commande", "Commande créée ✅", [
-        {
-          text: "OK",
-          onPress: () =>
-            router.replace({ pathname: "/orders", params: { phone } }),
+      router.replace({
+        pathname: "/order-success",
+        params: {
+          orderId: res.data.id,
+          total: res.data.total,
         },
-      ]);
+      });
       console.log(res.data);
     } catch (e: any) {
       Alert.alert(
