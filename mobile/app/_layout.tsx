@@ -6,11 +6,15 @@ export default function RootLayout() {
     <Stack
       screenOptions={{
         headerStyle: { backgroundColor: COLORS.primary },
-        headerTintColor: "#111",
+        headerTintColor: "#ffffff",
         headerTitleStyle: { fontWeight: "800" },
         contentStyle: { backgroundColor: "#fff" },
-        headerShown: false,
       }}
-    />
+    >
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="orders" />
+      <Stack.Screen name="order/[id]" />
+      <Stack.Screen name="cart" />
+    </Stack>
   );
 }

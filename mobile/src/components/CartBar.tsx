@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, Pressable } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Text, Pressable, Animated, Easing } from "react-native";
 import { useRouter } from "expo-router";
 import { useCartStore } from "../stores/cartStore";
 import { COLORS } from "../config/constants";
@@ -9,30 +9,78 @@ export default function CartBar() {
   const count = useCartStore((s) => s.count());
   const subtotal = useCartStore((s) => s.subtotal());
 
+  const translateY = useRef(new Animated.Value(100)).current;
+  const scale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (count > 0) {
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 350,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(translateY, {
+        toValue: 100,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [count]);
+
   if (count === 0) return null;
 
   return (
-    <View style={{ position: "absolute", left: 16, right: 16, bottom: 16 }}>
+    <Animated.View
+      style={{
+        position: "absolute",
+        left: 16,
+        right: 16,
+        bottom: 16,
+        transform: [{ translateY }],
+      }}
+    >
       <Pressable
-        onPress={() => router.push("/cart")}
-        style={{
-          height: 56,
-          borderRadius: 16,
-          backgroundColor: COLORS.primary,
-          paddingHorizontal: 16,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          shadowOpacity: 0.2,
-          shadowRadius: 8,
-          elevation: 4,
+        onPressIn={() => {
+          Animated.spring(scale, {
+            toValue: 0.97,
+            useNativeDriver: true,
+          }).start();
         }}
+        onPressOut={() => {
+          Animated.spring(scale, {
+            toValue: 1,
+            useNativeDriver: true,
+          }).start();
+        }}
+        onPress={() => router.push("/cart")}
       >
-        <Text style={{ fontWeight: "900", fontSize: 16 }}>Panier {count}</Text>
-        <Text style={{ fontWeight: "900", fontSize: 16 }}>
-          {subtotal} MAD →
-        </Text>
+        <Animated.View
+          style={{
+            transform: [{ scale }],
+            height: 58,
+            borderRadius: 18,
+            backgroundColor: COLORS.primary,
+            paddingHorizontal: 20,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            shadowColor: "#000",
+            shadowOpacity: 0.25,
+            shadowRadius: 10,
+            elevation: 8,
+          }}
+        >
+          <Text style={{ fontWeight: "900", fontSize: 16, color: "white" }}>
+            🛒 {count} article{count > 1 ? "s" : ""}
+          </Text>
+
+          <Text style={{ fontWeight: "900", fontSize: 16, color: "white" }}>
+            {subtotal} MAD →
+          </Text>
+        </Animated.View>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }
