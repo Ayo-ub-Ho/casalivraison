@@ -8,7 +8,7 @@ import MenuItemFactory from "./MenuItem.js";
 import UserFactory from "./User.js";
 import OrderFactory from "./Order.js";
 import OrderItemFactory from "./OrderItem.js";
-
+import OtpCode from "./otpCode.js";
 const db = {};
 db.sequelize = sequelize;
 
@@ -22,6 +22,8 @@ db.User = UserFactory(sequelize);
 db.Order = OrderFactory(sequelize);
 db.OrderItem = OrderItemFactory(sequelize);
 
+// auth
+db.OtpCode = OtpCode;
 /* ========= Associations ========= */
 
 // Restaurant ↔ Menu
