@@ -10,6 +10,7 @@ import { useLocalSearchParams, Stack, useRouter } from "expo-router";
 import { api } from "../../src/api/client";
 import { COLORS } from "../../src/config/constants";
 import CartBar from "../../src/components/CartBar";
+import { Image } from "expo-image";
 
 type MenuItem = {
   id: string;
@@ -78,25 +79,46 @@ export default function RestaurantScreen() {
                     })
                   }
                   style={{
+                    flexDirection: "row",
                     padding: 12,
                     borderRadius: 12,
                     backgroundColor: "#fafafa",
                     borderWidth: 1,
                     borderColor: "#eee",
                     marginBottom: 10,
+                    alignItems: "center",
                   }}
                 >
-                  <Text style={{ fontWeight: "800", color: COLORS.text }}>
-                    {mi.name}
-                  </Text>
-                  {!!mi.description && (
-                    <Text style={{ marginTop: 4, color: COLORS.muted }}>
-                      {mi.description}
+                  {/* Image */}
+                  <Image
+                    source={{ uri: mi.imageUrl }}
+                    style={{
+                      width: 90,
+                      height: 90,
+                      borderRadius: 12,
+                      marginRight: 12,
+                    }}
+                  />
+
+                  {/* Text Content */}
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontWeight: "800", color: COLORS.text }}>
+                      {mi.name}
                     </Text>
-                  )}
-                  <Text style={{ marginTop: 6, fontWeight: "900" }}>
-                    {mi.price} MAD
-                  </Text>
+
+                    {!!mi.description && (
+                      <Text
+                        numberOfLines={2}
+                        style={{ marginTop: 4, color: COLORS.muted }}
+                      >
+                        {mi.description}
+                      </Text>
+                    )}
+
+                    <Text style={{ marginTop: 6, fontWeight: "900" }}>
+                      {mi.price} MAD
+                    </Text>
+                  </View>
                 </Pressable>
               ))}
             </View>

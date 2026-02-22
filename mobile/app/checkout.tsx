@@ -7,7 +7,8 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import { Stack, useRouter } from "expo-router";
+import { Stack, useRouter, Redirect } from "expo-router";
+import { useAuthStore } from "../src/stores/authStore";
 import { COLORS } from "../src/config/constants";
 import { useCartStore } from "../src/stores/cartStore";
 import { useCheckoutStore } from "../src/stores/checkoutStore";
@@ -15,13 +16,15 @@ import { api } from "../src/api/client";
 
 export default function CheckoutScreen() {
   const router = useRouter();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
 
   const cartItems = useCartStore((s) => s.items);
   const restaurantId = useCartStore((s) => s.restaurantId);
   const subtotal = useCartStore((s) => s.subtotal());
   const clearCart = useCartStore((s) => s.clear);
 
-  const phone = useCheckoutStore((s) => s.phone);
+  const phone = user?.phone;
   const notes = useCheckoutStore((s) => s.notes);
   const deliveryFee = useCheckoutStore((s) => s.deliveryFee);
   const dropoffText = useCheckoutStore((s) => s.dropoffAddressText);
@@ -32,6 +35,10 @@ export default function CheckoutScreen() {
   const total = useMemo(() => subtotal + deliveryFee, [subtotal, deliveryFee]);
 
   const [submitting, setSubmitting] = useState(false);
+
+  if (!isAuthenticated) {
+    return <Redirect href="/login" />;
+  }
 
   const onSubmit = async () => {
     if (!cartItems.length) return;
