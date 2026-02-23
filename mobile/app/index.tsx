@@ -26,6 +26,8 @@ export default function HomeScreen() {
       .then((res) => setData(res.data))
       .catch((e) => console.log("API error:", e?.message))
       .finally(() => setLoading(false));
+      console.log(data);
+      
   }, []);
 
   if (loading) {

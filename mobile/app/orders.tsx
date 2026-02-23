@@ -5,10 +5,13 @@ import {
   FlatList,
   Pressable,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
-import { useLocalSearchParams, Stack, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { api } from "../src/api/client";
 import { COLORS } from "../src/config/constants";
+import { useAuthStore } from "../src/stores/authStore";
+import StatusBadge from "../src/components/StatusBadge";
 
 type Order = {
   id: string;
@@ -18,34 +21,114 @@ type Order = {
   Restaurant: { name: string };
 };
 
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("fr-MA", {
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export default function OrdersScreen() {
   const router = useRouter();
-  const { phone } = useLocalSearchParams<{ phone: string }>();
+  const user = useAuthStore((s) => s.user);
 
   const [data, setData] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchOrders = async (isRefresh = false) => {
+    if (!user?.phone) {
+      setLoading(false);
+      return;
+    }
+    if (isRefresh) setRefreshing(true);
+    try {
+      const res = await api.get(`/api/orders?phone=${user.phone}`);
+      setData(res.data);
+    } catch (e: any) {
+      console.log("Orders fetch error:", e?.message);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    if (!phone) return;
-
-    api
-      .get(`/api/orders?phone=${phone}`)
-      .then((res) => setData(res.data))
-      .catch((e) => console.log(e?.message))
-      .finally(() => setLoading(false));
-  }, [phone]);
+    fetchOrders();
+  }, [user?.phone]);
 
   return (
-    <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, backgroundColor: "#F7F7F7" }}>
       <Stack.Screen options={{ title: "Mes commandes" }} />
 
       {loading ? (
-        <ActivityIndicator />
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <ActivityIndicator color={COLORS.primary} size="large" />
+        </View>
       ) : (
         <FlatList
           data={data}
           keyExtractor={(item) => item.id}
+          contentContainerStyle={{ padding: 16, paddingBottom: 24 }}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => fetchOrders(true)}
+              tintColor={COLORS.primary}
+            />
+          }
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          ListEmptyComponent={
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                paddingTop: 80,
+              }}
+            >
+              <Text style={{ fontSize: 52 }}>📋</Text>
+              <Text
+                style={{
+                  marginTop: 16,
+                  fontSize: 20,
+                  fontWeight: "900",
+                  color: COLORS.text,
+                  textAlign: "center",
+                }}
+              >
+                Aucune commande
+              </Text>
+              <Text
+                style={{
+                  marginTop: 8,
+                  color: COLORS.muted,
+                  textAlign: "center",
+                  fontSize: 15,
+                }}
+              >
+                Vos commandes passées apparaîtront ici.
+              </Text>
+              <Pressable
+                onPress={() => router.replace("/")}
+                style={{
+                  marginTop: 24,
+                  height: 50,
+                  paddingHorizontal: 28,
+                  borderRadius: 14,
+                  backgroundColor: COLORS.primary,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ color: "white", fontWeight: "900" }}>
+                  Commander maintenant
+                </Text>
+              </Pressable>
+            </View>
+          }
           renderItem={({ item }) => (
             <Pressable
               onPress={() =>
@@ -54,37 +137,66 @@ export default function OrdersScreen() {
                   params: { id: item.id },
                 })
               }
-              style={{
-                padding: 14,
-                borderRadius: 14,
-                borderWidth: 1,
-                borderColor: "#eee",
-                backgroundColor: "#fafafa",
-              }}
+              style={({ pressed }) => ({
+                backgroundColor: "white",
+                borderRadius: 18,
+                padding: 16,
+                opacity: pressed ? 0.88 : 1,
+                shadowColor: "#000",
+                shadowOpacity: 0.05,
+                shadowRadius: 8,
+                elevation: 2,
+              })}
             >
-              <Text style={{ fontWeight: "900" }}>{item.Restaurant?.name}</Text>
-
-              <Text style={{ marginTop: 4, color: COLORS.muted }}>
-                {new Date(item.createdAt).toLocaleDateString()}
-              </Text>
-
-              <Text style={{ marginTop: 6, fontWeight: "900" }}>
-                {item.total} MAD
-              </Text>
-
-              <Text
+              {/* Restaurant + Date */}
+              <View
                 style={{
-                  marginTop: 6,
-                  fontWeight: "900",
-                  color:
-                    item.status === "DELIVERED"
-                      ? "green"
-                      : item.status === "CONFIRMED"
-                        ? "orange"
-                        : "black",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  marginBottom: 10,
                 }}
               >
-                {item.status}
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "900",
+                    color: COLORS.text,
+                    flex: 1,
+                    marginRight: 8,
+                  }}
+                >
+                  {item.Restaurant?.name ?? "Restaurant"}
+                </Text>
+                <Text style={{ color: COLORS.muted, fontSize: 12 }}>
+                  {formatDate(item.createdAt)}
+                </Text>
+              </View>
+
+              {/* Status + Total */}
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <StatusBadge status={item.status} />
+                <Text style={{ fontWeight: "900", fontSize: 16, color: COLORS.text }}>
+                  {item.total} MAD
+                </Text>
+              </View>
+
+              {/* Tap hint */}
+              <Text
+                style={{
+                  marginTop: 10,
+                  fontSize: 12,
+                  color: COLORS.muted,
+                  fontWeight: "600",
+                }}
+              >
+                Voir le détail →
               </Text>
             </Pressable>
           )}

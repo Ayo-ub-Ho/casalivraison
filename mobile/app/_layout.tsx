@@ -12,6 +12,7 @@ export default function RootLayout() {
   }, [restoreAuth]);
 
   if (loading) return null;
+
   return (
     <Stack
       screenOptions={{
@@ -22,11 +23,16 @@ export default function RootLayout() {
       }}
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="orders" />
-      <Stack.Screen name="order/[id]" />
-      <Stack.Screen name="cart" />
-      <Stack.Screen name="login" options={{ title: "Se connecter" }} />
+      <Stack.Screen name="login" options={{ title: "Se Connecter" }} />
+      <Stack.Screen name="otp" options={{ title: "Vérification" }} />
+      <Stack.Screen name="cart" options={{ title: "Panier" }} />
+      <Stack.Screen name="checkout" options={{ title: "Paiement" }} />
+      <Stack.Screen name="orders" options={{ title: "Mes commandes" }} />
+      <Stack.Screen name="order/[id]" options={{ title: "Commande" }} />
       <Stack.Screen name="order-success" options={{ headerShown: false }} />
+      <Stack.Screen name="address/pick" options={{ title: "Adresse" }} />
+      <Stack.Screen name="menu-item/[id]" options={{ title: "Article" }} />
+      <Stack.Screen name="restaurant/[id]" options={{ title: "Restaurant" }} />
     </Stack>
   );
 }
